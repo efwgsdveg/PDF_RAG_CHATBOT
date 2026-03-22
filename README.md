@@ -1,78 +1,51 @@
-# PDF RAG 问答系统（Embedding版）
+# 📄 PDF RAG Chatbot
 
-一个基于 PDF 文档的问答系统，采用 RAG（检索增强生成）方案，实现“上传文档 → 提问 → 智能回答”。
+一个基于 **RAG（Retrieval-Augmented Generation）** 的 PDF 智能问答系统，支持多轮对话、语义检索与上下文理解。
 
----
+## 🚀 功能特点
 
-## 一、功能介绍
+* 📂 支持多PDF上传解析
+* 🔍 基于 FAISS 的向量检索
+* 🧠 多轮对话（问题重写）
+* 📊 引用来源展示
+* ⚡ Embedding 缓存优化
+* 💬 类 ChatGPT 对话体验
 
-* 支持上传多个 PDF 文件
-* 自动提取 PDF 文本内容
-* 文本切分（避免上下文过长）
-* 使用向量（Embedding）进行语义检索
-* 调用大模型生成回答
-* 支持简单多轮对话
-* 显示引用来源（包含相似度）
+## 🧱 技术栈
 
----
+* Streamlit（前端）
+* FAISS（向量检索）
+* 百度千帆（Embedding + LLM）
+* LangChain（文本切分）
 
-## 二、技术方案
+## 🧠 设计思路
 
-### 1. 整体流程
+本项目采用 RAG 架构：
+1. 文档切分 → Embedding
+2. 用户问题 → 向量检索
+3. Top-K 文本 → LLM生成回答
 
-PDF → 文本提取 → 文本切分 → Embedding向量化 → 相似度检索 → 拼接上下文 → 大模型生成答案
+## 📌 项目亮点
 
----
+* 实现完整RAG流程（Embedding → 检索 → LLM）
+* 支持上下文感知的多轮问答
+* 针对“总结类问题”做了优化处理
+* 引入缓存机制降低API调用成本
 
-### 2. 核心技术
+## 🖥️ 使用方法
 
-* 前端框架：Streamlit
-* PDF解析：PyPDF2
-* 文本切分：LangChain（RecursiveCharacterTextSplitter）
-* 向量计算：NumPy
-* 向量生成：百度千帆 Embedding API
-* 大模型：百度千帆 ERNIE-3.5
-* 相似度计算：余弦相似度
-
----
-
-## 三、项目结构
-
-.
-├── app.py                # 主程序
-├── requirements.txt      # 依赖文件
-├── vector_store/         # 本地向量缓存（不会上传）
-└── README.md
-
----
-
-## 四、安装依赖
-
+```bash
 pip install -r requirements.txt
-
----
-
-## 五、运行项目
-
 streamlit run app.py
+```
 
----
+## 🔑 配置
 
-## 六、使用说明
+在页面中输入你的千帆 API Key
 
-1. 在侧边栏输入千帆 API Key
-2. 上传 PDF 文件
-3. 点击「处理PDF」
-4. 在输入框输入问题进行提问
 
----
+## 📷 示例
 
-## 七、注意事项
+![alt text](image.png)
 
-* 首次处理 PDF 时会调用 Embedding API，速度较慢
-* 向量数据会缓存到本地 vector_store/
-* 若删除该文件夹，需要重新处理 PDF
-* 需要保证 API Key 有效，否则会返回接口错误
-
----
 

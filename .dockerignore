@@ -1,0 +1,12 @@
+# Docker 构建上下文忽略文件（加快构建、避免暴露密钥）
+venv/
+.venv/
+__pycache__/
+*.pyc
+.env
+.git
+.gitignore
+README.md
+image.png
+.pytest_cache/
+tests/

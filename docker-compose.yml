@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8501:8501"
+    volumes:
+      # 把本地的 .env 挂进去（密钥不打包进镜像）
+      - ./.env:/app/.env
+      # 向量库和日志持久化
+      - ./vector_store:/app/vector_store
+      - ./logs:/app/logs
+    restart: unless-stopped

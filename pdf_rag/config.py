@@ -41,6 +41,11 @@ CHUNK_OVERLAP = 50
 TOP_K = 5
 SUMMARY_TOP_K = 30
 
+# 重试
+RETRY_MAX_ATTEMPTS = 3
+RETRY_MIN_DELAY = 1  # 秒
+RETRY_MAX_DELAY = 4  # 秒
+
 # 向量库路径
 VECTOR_STORE_DIR = "vector_store"
 FAISS_INDEX_PATH = "vector_store/faiss.index"

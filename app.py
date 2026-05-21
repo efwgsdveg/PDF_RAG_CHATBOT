@@ -1,3 +1,6 @@
+import logging
+import os
+import sys
 import streamlit as st
 
 from pdf_rag.pdf_utils import get_pdf_text, get_text_chunks
@@ -12,6 +15,18 @@ from pdf_rag.config import TOP_K, SUMMARY_TOP_K, QIANFAN_API_KEY
 
 
 def main():
+    # 日志配置
+    os.makedirs("logs", exist_ok=True)
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s | %(levelname)s | %(message)s",
+        datefmt="%H:%M:%S",
+        handlers=[
+            logging.StreamHandler(sys.stderr),
+            logging.FileHandler("logs/rag.log", encoding="utf-8"),
+        ],
+    )
+
     st.title("📄 PDF RAG Chatbot")
 
     # 启动时检查 API Key
@@ -37,6 +52,7 @@ def main():
 
             text = get_pdf_text(pdf_files)
             chunks = get_text_chunks(text)
+            logging.info("PDF 处理: %d 个文件 -> %d 个文本块", len(pdf_files), len(chunks))
 
             with st.spinner("处理中..."):
                 index, texts = build_vector_store(chunks)

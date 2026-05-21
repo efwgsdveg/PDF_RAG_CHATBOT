@@ -5,3 +5,4 @@ __pycache__/
 vector_store/
 *.pkl
 .env
+logs/

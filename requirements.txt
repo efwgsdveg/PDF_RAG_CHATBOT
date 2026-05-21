@@ -1,6 +1,6 @@
-streamlit
-requests
-PyPDF2
-langchain
-numpy
-faiss-cpu
+streamlit>=1.28
+requests>=2.31
+PyPDF2>=3.0
+langchain>=1.0
+numpy>=1.26
+faiss-cpu>=1.7

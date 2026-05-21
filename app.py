@@ -8,11 +8,17 @@ from pdf_rag.vector_store import (
     similarity_search,
 )
 from pdf_rag.llm import ask_qianfan, rewrite_question
-from pdf_rag.config import TOP_K, SUMMARY_TOP_K
+from pdf_rag.config import TOP_K, SUMMARY_TOP_K, QIANFAN_API_KEY
 
 
 def main():
     st.title("📄 PDF RAG Chatbot")
+
+    # 启动时检查 API Key
+    if not QIANFAN_API_KEY:
+        st.error("未配置 QIANFAN_API_KEY，请在 .env 文件中设置或添加为环境变量")
+        st.info("参考 .env.example 文件格式")
+        return
 
     if "vector_data" not in st.session_state:
         st.session_state.vector_data = load_vector_store()
@@ -22,19 +28,18 @@ def main():
 
     # Sidebar
     with st.sidebar:
-        api_key = st.text_input("API Key", type="password")
         pdf_files = st.file_uploader("上传PDF", type="pdf", accept_multiple_files=True)
 
         if st.button("处理PDF"):
-            if not api_key or not pdf_files:
-                st.warning("请填写完整")
+            if not pdf_files:
+                st.warning("请上传 PDF 文件")
                 return
 
             text = get_pdf_text(pdf_files)
             chunks = get_text_chunks(text)
 
             with st.spinner("处理中..."):
-                index, texts = build_vector_store(chunks, api_key)
+                index, texts = build_vector_store(chunks)
 
             if index is None:
                 st.error("Embedding失败")
@@ -61,10 +66,6 @@ def main():
     question = st.chat_input("请输入问题")
 
     if question:
-        if not api_key:
-            st.warning("请输入 API Key")
-            return
-
         if st.session_state.vector_data is None:
             st.warning("请先上传PDF")
             return
@@ -76,10 +77,10 @@ def main():
         st.session_state.chat_history.append({"role": "user", "content": question})
 
         # 问题改写（多轮对话）
-        new_q = rewrite_question(api_key, question, st.session_state.chat_history)
+        new_q = rewrite_question(question, st.session_state.chat_history)
 
         # 检索
-        results = similarity_search(new_q, api_key, index, texts)
+        results = similarity_search(new_q, index, texts)
         if not results:
             st.warning("未找到相关内容")
             return
@@ -93,7 +94,7 @@ def main():
         # 生成回答
         with st.chat_message("assistant"):
             with st.spinner("思考中..."):
-                answer = ask_qianfan(api_key, question, context, st.session_state.chat_history)
+                answer = ask_qianfan(question, context, st.session_state.chat_history)
 
             st.write(answer)
             with st.expander("📄 查看引用来源"):

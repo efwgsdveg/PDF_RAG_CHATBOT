@@ -1,6 +1,6 @@
 import requests
 
-from pdf_rag.config import LLM_URL, LLM_MODEL, LLM_TEMPERATURE, LLM_TIMEOUT
+from pdf_rag.config import LLM_URL, LLM_MODEL, LLM_TEMPERATURE, LLM_TIMEOUT, QIANFAN_API_KEY
 
 
 def _format_history(history):
@@ -12,7 +12,7 @@ def _format_history(history):
     return text
 
 
-def ask_qianfan(api_key, question, context, history):
+def ask_qianfan(question, context, history):
     """调用千帆 LLM 生成回答"""
     history_text = _format_history(history)
 
@@ -43,7 +43,7 @@ def ask_qianfan(api_key, question, context, history):
             LLM_URL,
             headers={
                 "Content-Type": "application/json",
-                "Authorization": f"Bearer {api_key}",
+                "Authorization": f"Bearer {QIANFAN_API_KEY}",
             },
             json={
                 "model": LLM_MODEL,
@@ -58,7 +58,7 @@ def ask_qianfan(api_key, question, context, history):
         return "⚠️ 模型调用失败，请稍后再试"
 
 
-def rewrite_question(api_key, question, history):
+def rewrite_question(question, history):
     """根据对话历史补全问题（多轮对话支持）"""
     if not history:
         return question
@@ -76,7 +76,7 @@ def rewrite_question(api_key, question, history):
     try:
         r = requests.post(
             LLM_URL,
-            headers={"Authorization": f"Bearer {api_key}"},
+            headers={"Authorization": f"Bearer {QIANFAN_API_KEY}"},
             json={
                 "model": LLM_MODEL,
                 "messages": [{"role": "user", "content": prompt}],

@@ -13,13 +13,13 @@ from pdf_rag.config import (
 from pdf_rag.embedding import get_embedding
 
 
-def build_vector_store(text_chunks, api_key):
+def build_vector_store(text_chunks):
     """构建 FAISS 向量索引"""
     vectors = []
     valid_texts = []
 
     for chunk in text_chunks:
-        emb = get_embedding(api_key, chunk)
+        emb = get_embedding(chunk)
         if emb is not None:
             vectors.append(emb)
             valid_texts.append(chunk)
@@ -53,9 +53,9 @@ def load_vector_store():
     return index, texts
 
 
-def similarity_search(question, api_key, index, texts, k=TOP_K):
+def similarity_search(question, index, texts, k=TOP_K):
     """向量检索 Top-K 相似文本块"""
-    q_emb = get_embedding(api_key, question)
+    q_emb = get_embedding(question)
     if q_emb is None:
         return []
 

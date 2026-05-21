@@ -6,3 +6,4 @@ vector_store/
 *.pkl
 .env
 logs/
+.pytest_cache/
